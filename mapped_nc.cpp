@@ -63,7 +63,20 @@ std::vector<qInterval> readQueries(std::istream& input) { //RVO should make this
 }
 
 int main(int argc, char * const argv[]) {
+//	const std::string usage=std::string("Usage: ")+argv[0]+"\n";
+	const std::string usage = std::string("Positional arguments:\n")+
+			"<input_gff>	reference file in GFF format\n"+
+			"<query_BED>	query file in BED format, or \"-\" to take from stdin\n"+
+			"Options:\n"+
+			"-T		use interval trees";
+
 	GArgs args(argc, argv, "hTo:");
+	args.printError(usage.c_str(), true);
+	if (args.getOpt('h')) {
+		cout << usage;
+		exit(EXIT_SUCCESS);
+	}
+
 	bool doNCLorITT = !args.getOpt('T');
 	//bool doNCLorITT = true;
 	std::unordered_map<std::string, IntervalTree> map_trees;
@@ -71,8 +84,13 @@ int main(int argc, char * const argv[]) {
 
 	const char* o_file = args.getOpt('o') ? args.getOpt('o') : "mapped_ov.tab";
 
-	if(args.startNonOpt()!=2) {
-		std::cerr << "Only " << args.startNonOpt() << " arguments provided (expected 2)";
+//	if(args.isError()) {
+//		std::cerr << "Error in arg #" << args.isError() << "\n";
+//		exit(EXIT_FAILURE);
+//	}
+
+	if (args.startNonOpt()!=2) {
+		std::cerr << "Only " << args.startNonOpt() << " arguments provided (expected 2)" << "\n";
 		//print usage here?
 		exit(EXIT_FAILURE);
 	}
